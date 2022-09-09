@@ -3,10 +3,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Jeux_de_la_vie.Avalonia.Grille_de_jeu_Control">
+             x:Class="Jeux_de_la_vie.Avalonia.Grille_de_jeu_Control"
+             UseLayoutRounding="True">
 
   <Border x:Name="Grille_de_jeu_Brd" BorderBrush="#CFCFCF" BorderThickness="1">
-    <Image x:Name="Grille_de_jeu_Img"  />
+    <Image x:Name="Grille_de_jeu_Img" RenderOptions.BitmapInterpolationMode="Default"  />
   </Border>
   
 </UserControl>
