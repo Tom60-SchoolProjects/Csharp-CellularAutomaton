@@ -1,0 +1,50 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="10">
+          <StackPanel>
+            
+            <ComboBox SelectedIndex="0">
+              <ComboBoxItem>Test</ComboBoxItem>
+            </ComboBox>
+
+            <Border Classes="Separator"/>
+            
+            <Button Content="&#xf00b;"/>
+            
+            <ButtonSpinner Content="0" />
+            
+          </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+  <Style Selector="StackPanel">
+    <Setter Property="Height" Value="50"/>
+    <Setter Property="Orientation" Value="Horizontal" />    
+  </Style>
+  
+  <Style Selector="Button">
+    <Setter Property="Height" Value="40" />
+    <Setter Property="Width" Value="40" />
+    <Setter Property="Padding" Value="0" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
+    <Setter Property="HorizontalContentAlignment" Value="Center" />
+    <Setter Property="Background" Value="Transparent" />
+    <Setter Property="FontSize" Value="24" />
+    <Setter Property="FontFamily" Value="{StaticResource Remix Icon}" />
+  </Style>
+  
+  <Style Selector="Border.Separator" >
+    <Setter Property="Width" Value="2" />
+    <Setter Property="Background" Value="Gray" />
+    <Setter Property="Opacity" Value="0.2" />
+    <Setter Property="Margin" Value="2, 10" />
+    <Setter Property="CornerRadius" Value="2" />
+  </Style>
+  
+  <Style Selector="ComboBox">
+    <Setter Property="VerticalAlignment" Value="Center" />
+  </Style>
+
+  
+</Styles>

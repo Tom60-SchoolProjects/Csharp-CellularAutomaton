@@ -1,0 +1,92 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="using:Jeux_de_la_vie.Avalonia.Controls"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="Jeux_de_la_vie.Avalonia.MainWindow"
+        Title="Jeux_de_la_vie.Avalonia">
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto"/>
+      <RowDefinition Height="0"/>
+      <RowDefinition Height="*" />
+    </Grid.RowDefinitions>
+
+    <Border Grid.Row="0"
+            Margin="10" Padding="4, 0"
+            CornerRadius="6" Background="WhiteSmoke"
+            BoxShadow="0 0 10 0 Gray">
+      <Grid Name="Controles" Height="50" >        
+        <Grid.Styles>
+          <StyleInclude Source="/Styles/Menu_Styles.axaml" />
+        </Grid.Styles>        
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Gauche (Data In) -->
+        <StackPanel Grid.Column="0" HorizontalAlignment="Left">
+
+          <Button x:Name="Ajouter_tableau_Btn" Click="Charger_tableau"
+                  Content="&#xea11;" ToolTip.Tip="Ajout une forme à la zone de jeu"/>
+          
+          <Border Classes="Separator"/>
+
+          <Button x:Name="Modifier_tableau_Btn" Click="Modifier_tableau"
+                  Content="&#xec80;" ToolTip.Tip="Modifier la zone de jeu"/>
+
+          <Border Classes="Separator"/>
+          
+          <Button x:Name="Effacer_tableau_Btn" Click="Modifier_tableau"
+                  Content="&#xec9f;" ToolTip.Tip="Efface la zone de jeu"/>
+          
+        </StackPanel>
+
+        <!-- Centre (Control du jeu) -->
+        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+
+          <ComboBox SelectedIndex="0" ToolTip.Tip="Mode de jeu">
+            <ComboBoxItem>Jeu de la vie</ComboBoxItem>
+            <ComboBoxItem Content="Day &amp; Night" />
+          </ComboBox>
+          
+          <Border Classes="Separator"/>
+
+          <controls:Number_box_User_control x:Name="Cycle_Number_box"
+                                            Title="&#xf064;" Number="123"
+                                            ValueChanged="Cycle_Number_box_Value_changed" />
+
+          <Border Classes="Separator"/>
+
+          <controls:Number_box_User_control x:Name="Speed_Number_box"
+                                            Title="&#xf177;" Number="100" Suffix="%"
+                                            ValueChanged="Speed_Number_box_Value_changed"/>
+          
+          <Border Classes="Separator"/>
+          
+          <Button x:Name="Lecture_tableau_Btn" Click="Lire_tableau"
+                  Content="&#xf00b;" ToolTip.Tip="Lecture"/>
+          <!--Border Classes="Separator"/-->
+
+        </StackPanel>
+
+        <!-- Droite (Data Out) -->
+        <StackPanel Grid.Column="2" HorizontalAlignment="Right">
+          <Button x:Name="Sauvegarder_tableau_Btn" Click="Sauvegarder_tableau"
+                  Content="&#xf0b1;" ToolTip.Tip="Sauvegarder" />
+        </StackPanel>
+
+      </Grid>
+    </Border>
+
+    <controls:Grille_de_jeu_Control x:Name="Grille_de_jeu"
+                                    Grid.Row="2"
+                                    Margin="8"/>
+  
+</Grid>
+  
+</Window>
