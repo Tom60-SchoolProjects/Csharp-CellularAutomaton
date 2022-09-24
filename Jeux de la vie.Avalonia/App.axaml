@@ -4,4 +4,9 @@
     <Application.Styles>
         <FluentTheme Mode="Light"/>
     </Application.Styles>
+  <Application.Resources>
+      <ResourceDictionary>
+        <FontFamily x:Key="Remix Icon">/Fonts/remixicon.ttf#remixicon</FontFamily>
+      </ResourceDictionary>
+  </Application.Resources>
 </Application>

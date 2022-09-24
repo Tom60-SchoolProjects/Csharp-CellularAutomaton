@@ -1,0 +1,81 @@
+﻿<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Height="365" Width="500" 
+        x:Class="Jeux_de_la_vie.Avalonia.Windows.Propriété_du_tableau_Window"
+        Title="Propriété du tableau">
+  
+  <Grid Margin="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="24" />
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="14" />
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="auto" />
+    </Grid.RowDefinitions>
+
+    <!-- Titre de la fenêtre-->
+    <TextBlock x:Name="Titre_Text" Grid.Row="0"
+               Text="Propriété du tableau"
+               FontWeight="SemiBold" FontSize="24"/>
+
+    <!-- Taille du tableau -->
+    <TextBlock Text="Taille :" Grid.Row="2" />
+    <StackPanel Grid.Row="3" Margin="8"
+                Orientation="Horizontal" Spacing="10">
+      <TextBox x:Name="Taille_lignes_TextBox"
+               Text="100"
+               UseFloatingWatermark="True" Watermark="Lignes"/>
+      <TextBlock Text="X" VerticalAlignment="Center"/>
+      <TextBox x:Name="Taille_colonnes_TextBox"
+               Text="80"
+               UseFloatingWatermark="True" Watermark="Colonnes"/>
+    </StackPanel>
+
+    <!-- Taille du tableau -->
+    <TextBlock Grid.Row="5"
+               Text="Couleurs :" />
+    <TextBlock Text="En format hexadécimal (ex : #FA154B)" Grid.Row="6"
+               FontWeight="SemiLight" />
+    <StackPanel Grid.Row="7" Margin="8"
+                Orientation="Horizontal" Spacing="10">
+      <Border x:Name="Couleur_cellule_Border"
+              BorderBrush="DarkGray" BorderThickness="1"
+              CornerRadius="8"
+              Height="40" Width="40"
+              Background="#FAFAFA" />
+      <TextBox x:Name="Couleur_cellule_TextBox"
+               MinWidth="80" HorizontalAlignment="Left"
+               Text="#FAFAFA"
+               UseFloatingWatermark="True" Watermark="Cellule"/>
+    </StackPanel>
+    <StackPanel Grid.Row="8" Margin="8" Orientation="Horizontal" Spacing="10">
+      <Border x:Name="Couleur_tableau_Border"
+              BorderBrush="DarkGray" BorderThickness="1"
+              CornerRadius="8"
+              Height="40" Width="40"
+              Background="#141516" />
+      <TextBox x:Name="Couleur_tableau_TextBox"
+               MinWidth="80"  HorizontalAlignment="Left"
+               Text="#141516"
+               UseFloatingWatermark="True" Watermark="Tableau"/>
+    </StackPanel>
+
+    <!-- Boutons de navigation -->
+    <TextBlock x:Name="Message_derreur_Text" Grid.Row="10"
+               Text="Ceci est un message d'erreur" />
+    <StackPanel Grid.Row="10" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="10" >
+      <Button x:Name="Appliquer_Button" Content="Appliquer" IsEnabled="False" Click="Appliquer_Button_Click" />
+      <Button x:Name="Fermer_Button" Content="Fermer" Click="Fermer_Button_Click"/>
+    </StackPanel>
+  </Grid>
+  
+</Window>

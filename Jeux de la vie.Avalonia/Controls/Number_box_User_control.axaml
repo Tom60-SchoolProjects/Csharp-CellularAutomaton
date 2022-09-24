@@ -1,0 +1,54 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Jeux_de_la_vie.Avalonia.Controls.Number_box_User_control">
+  
+  <UserControl.Styles>
+    <Style Selector="RepeatButton" >
+      <Setter Property="Height" Value="14" />
+      <Setter Property="Width" Value="20" />
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="FontFamily" Value="{StaticResource Remix Icon}" />
+      <Setter Property="BorderThickness" Value="0" />
+      <Setter Property="Padding" Value="0" />
+      <Setter Property="HorizontalContentAlignment" Value="Center" />
+      <Setter Property="VerticalContentAlignment" Value="Center" />
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+  </UserControl.Styles>
+  
+  <Border Height="30" BorderThickness="1" BorderBrush="Gray" CornerRadius="4" >
+    <StackPanel Orientation="Horizontal" Height="20">
+
+      <TextBlock x:Name="Title_text" Text="X"
+                 Width="24" FontSize="16"
+                 TextAlignment="Center" VerticalAlignment="Center"
+                 FontFamily="{StaticResource Remix Icon}" />
+
+      <Rectangle Fill="Gray" Width="1" Height="30" />
+
+      <TextBox x:Name="Number_text" Text="000"
+               MinHeight="28" MinWidth="28" Padding="3"
+               BorderThickness="0" CornerRadius="0"
+               VerticalContentAlignment="Center"
+               HorizontalContentAlignment="Center"/>
+
+      <Rectangle Fill="Gray" Width="1" Height="30" />
+
+      <StackPanel Orientation="Vertical"
+                  Height="28" Width="20">
+        <RepeatButton x:Name="Click_up"
+                      Grid.Row="0" Classes="Spinner"
+                      CornerRadius="0, 4, 0, 0"
+                      Content="&#xea56;" Click="On_Click_up_Button_Click" />
+        <RepeatButton x:Name="Click_down"
+                      Grid.Row="1"
+                      CornerRadius="0, 0, 4, 0"
+                      Content="&#xea50;" Click="On_Click_down_Button_Click"  />
+      </StackPanel>
+    </StackPanel>
+  </Border>
+  
+</UserControl>

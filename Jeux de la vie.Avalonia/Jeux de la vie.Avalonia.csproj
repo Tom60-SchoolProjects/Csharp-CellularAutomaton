@@ -9,10 +9,10 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove=".gitignore" />
-    <None Remove="Fonts\Font Awesome 6 Free-Regular-400.otf" />
+    <None Remove="Fonts\remixicon.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Fonts\Font Awesome 6 Free-Regular-400.otf" />
+    <AvaloniaResource Include="Fonts\remixicon.ttf" />
   </ItemGroup>
   <ItemGroup>
     <!--This helps with theme dll-s trimming.
