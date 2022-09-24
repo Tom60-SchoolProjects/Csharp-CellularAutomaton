@@ -256,7 +256,6 @@
         else
             for (int i = 0; i < number_of_round; i++)
             {
-                Console.WriteLine("D&N");
                 Console.WriteLine($"round {i + 1} !");
                 Round_Day_And_Night(ref gameboard, table_size);
                 Display(gameboard, table_size);
