@@ -1,6 +1,7 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Jeux_de_la_vie.Avalonia.Windows;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,20 +10,29 @@ namespace Jeux_de_la_vie.Avalonia
 {
     public partial class MainWindow : Window
     {
+        #region Constructors
         public MainWindow()
         {
             InitializeComponent();
 
-            Grille_de_jeu.Nouveau_tableau(150, 100);
+            Grille_de_jeu.Nouveau_tableau(100, 100);
 
-            for (int i = 0; i < 100; i++)
-            {
-                Grille_de_jeu.Déssiner(i, 0);
-                Grille_de_jeu.Déssiner(i, i);
-                Grille_de_jeu.Déssiner(0, i);
-            }
+            var tableau = new bool[100, 100];
+
+            tableau[10, 10] = true;
+            tableau[10, 11] = true;
+            tableau[10, 12] = true;
+
+            jeu_de_la_vie = new();
+            jeu_de_la_vie.TableauActualisé += Jeu_de_la_vie_TableauActualisé;
         }
+        #endregion
 
+        #region Variables
+        Jeu_de_la_vie jeu_de_la_vie;
+        #endregion
+
+        #region Methods
         public async void Charger_tableau(object sender, RoutedEventArgs e)
         {
             // Création du sélecteur de fichier
@@ -58,7 +68,31 @@ namespace Jeux_de_la_vie.Avalonia
 
         public async void Lire_tableau(object sender, RoutedEventArgs e)
         {
+            if (jeu_de_la_vie.EstDémarrer)
+            {
+                jeu_de_la_vie.Arrêter();
+                Lecture_tableau_Btn.Content = "\uF00B";
+                ToolTip.SetTip(Lecture_tableau_Btn, "Démarrer simulation");
+            }
+            else
+            {
+                var tableau = Grille_de_jeu.Exporter_le_tableau();
 
+                for (int y = 0; y < tableau.GetLength(0); y++)
+                {
+                    string line = "";
+                    for (int x = 0; x < tableau.GetLength(1); x++)
+                    {
+                        line += tableau[y, x] ? "X" : "-";
+                    }
+
+                    Debug.WriteLine(line);
+                }
+
+                jeu_de_la_vie.Démarrer(tableau);
+                Lecture_tableau_Btn.Content = "\uEFD8";
+                ToolTip.SetTip(Lecture_tableau_Btn, "Arréter simulation");
+            }
         }
 
         public async void Sauvegarder_tableau(object sender, RoutedEventArgs e)
@@ -84,5 +118,15 @@ namespace Jeux_de_la_vie.Avalonia
         public async void Speed_Number_box_Value_changed(object sender, int e)
         {
         }
+
+        private void Jeu_de_la_vie_TableauActualisé(object? sender, bool[,] état_actuel)
+        {
+            for (int y = 0; y > état_actuel.GetLength(0); y++)
+                for (int x = 0; x > état_actuel.GetLength(1); x++)
+                {
+                    Grille_de_jeu.Déssiner(état_actuel[y, x], x, y);
+                }
+        }
+        #endregion
     }
 }

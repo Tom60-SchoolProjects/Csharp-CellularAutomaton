@@ -9,6 +9,7 @@ using SystemBitmap = System.Drawing.Bitmap;
 using Color = System.Drawing.Color;
 using Graphics = System.Drawing.Graphics;
 using SolidBrush = System.Drawing.SolidBrush;
+using System.Diagnostics;
 
 namespace Jeux_de_la_vie.Avalonia.Controls
 {
@@ -58,7 +59,12 @@ namespace Jeux_de_la_vie.Avalonia.Controls
         #region Methods
         public void Ajouter_tableau(string nom_du_fichier)
         {
-            grille_source = new SystemBitmap(nom_du_fichier);
+            var nouveau_tableau = new SystemBitmap(nom_du_fichier);
+
+            using (Graphics g = Graphics.FromImage(grille_source))
+            {
+                g.DrawImage(nouveau_tableau, 0, 0);;
+            }
 
             Recharger_grille();
         }
@@ -75,25 +81,43 @@ namespace Jeux_de_la_vie.Avalonia.Controls
             Recharger_grille();
         }
 
-        public void Déssiner(int position_vertical, int position_horizontal)
+        public void Déssiner(bool cellule, int position_vertical, int position_horizontal)
         {
             grille_source.SetPixel(
                 position_vertical,
                 position_horizontal,
-                Couleur_cellule);
+                cellule ? Couleur_cellule : Couleur_tableau);
 
             Recharger_grille();
         }
 
+        public bool[,] Exporter_le_tableau()
+        {
+            var tableau = new bool[grille_source.Height, grille_source.Width];
+
+            var couleur_cellule = Couleur_cellule.ToArgb();
+            /*Debug.Write("");
+            Debug.Write(couleur_cellule);
+            Debug.Write("");*/
+
+            for (int y = 0; y < grille_source.Height; y++)
+                for (int x = 0; x < grille_source.Width; x++)
+                {
+                    //Debug.Write(grille_source.GetPixel(x, y).ToArgb());
+                    tableau[y, x] = grille_source.GetPixel(x, y).ToArgb() == couleur_cellule;
+                }
+
+            return tableau;
+        }
+
         private void Recharger_grille()
         {
-            using (var memory = new MemoryStream())
-            {
-                grille_source.Save(memory, ImageFormat.Bmp);
-                memory.Position = 0;
+            using var memory = new MemoryStream();
 
-                Grille_de_jeu = new Bitmap(memory);
-            }
+            grille_source.Save(memory, ImageFormat.Bmp);
+
+            memory.Position = 0;
+            Grille_de_jeu = new Bitmap(memory);
         }
         #endregion
     }

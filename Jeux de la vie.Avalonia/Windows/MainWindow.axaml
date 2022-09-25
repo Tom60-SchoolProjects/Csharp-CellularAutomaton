@@ -68,8 +68,9 @@
           
           <Border Classes="Separator"/>
           
-          <Button x:Name="Lecture_tableau_Btn" Click="Lire_tableau"
-                  Content="&#xf00b;" ToolTip.Tip="Lecture"/>
+          <Button x:Name="Lecture_tableau_Btn" Content="&#xf00b;"
+                  Click="Lire_tableau"
+                  ToolTip.Tip="Démarrer simulation"/>
           <!--Border Classes="Separator"/-->
 
         </StackPanel>
