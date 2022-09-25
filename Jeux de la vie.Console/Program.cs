@@ -82,7 +82,7 @@ class Program
             for (int j = 0; j < table_size; j++)
                 Console.Write($"{table[i, j]} ");
             Console.WriteLine();
-            Console.WriteLine();
+            //Console.WriteLine();
         }
         Console.WriteLine();
         Console.WriteLine();

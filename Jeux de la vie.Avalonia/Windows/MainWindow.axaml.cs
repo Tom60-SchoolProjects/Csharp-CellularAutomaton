@@ -16,25 +16,24 @@ namespace Jeux_de_la_vie.Avalonia
             InitializeComponent();
 
             Grille_de_jeu.Nouveau_tableau(100, 100);
-
-            var tableau = new bool[100, 100];
-
-            tableau[10, 10] = true;
-            tableau[10, 11] = true;
-            tableau[10, 12] = true;
+            tableau_initial = new bool[100, 100];
 
             jeu_de_la_vie = new();
             jeu_de_la_vie.TableauActualisé += Jeu_de_la_vie_TableauActualisé;
+            jeu_de_la_vie.Définir_tableau(tableau_initial);
         }
         #endregion
 
         #region Variables
         Jeu_de_la_vie jeu_de_la_vie;
+        bool[,] tableau_initial;
         #endregion
 
         #region Methods
         public async void Charger_tableau(object sender, RoutedEventArgs e)
         {
+            // TODO: refaire
+
             // Création du sélecteur de fichier
             var dialog_de_fichier = new OpenFileDialog()
             {
@@ -56,17 +55,29 @@ namespace Jeux_de_la_vie.Avalonia
             }
         }
 
-        public async void Modifier_tableau(object sender, RoutedEventArgs e)
+        public void Modifier_tableau(object sender, RoutedEventArgs e)
         {
             var fenétre_propriété_du_tableau = new Propriété_du_tableau_Window()
             {
-                Lignes = (int)Grille_de_jeu.Grille_de_jeu.Size.Height,
-                Colonnes = (int)Grille_de_jeu.Grille_de_jeu.Size.Width,
+                Lignes = Grille_de_jeu.Lignes,
+                Colonnes = Grille_de_jeu.Colonnes,
             };
             fenétre_propriété_du_tableau.Show();
         }
 
-        public async void Lire_tableau(object sender, RoutedEventArgs e)
+        public void Effacer_tableau(object sender, RoutedEventArgs e)
+        {
+            var nouveau_tableau = new bool[tableau_initial.GetLength(0), tableau_initial.GetLength(1)];
+            Définir_tableau(nouveau_tableau);
+        }
+
+        public void Généreration_aléatoire_tableau(object sender, RoutedEventArgs e)
+        {
+            var nouveau_tableau = Autocell.Initialiser_aléatoirement_le_tableau(tableau_initial);
+            Définir_tableau(nouveau_tableau);
+        }
+
+        public void Lire_tableau(object sender, RoutedEventArgs e)
         {
             if (jeu_de_la_vie.EstDémarrer)
             {
@@ -76,23 +87,16 @@ namespace Jeux_de_la_vie.Avalonia
             }
             else
             {
-                var tableau = Grille_de_jeu.Exporter_le_tableau();
-
-                for (int y = 0; y < tableau.GetLength(0); y++)
-                {
-                    string line = "";
-                    for (int x = 0; x < tableau.GetLength(1); x++)
-                    {
-                        line += tableau[y, x] ? "X" : "-";
-                    }
-
-                    Debug.WriteLine(line);
-                }
-
-                jeu_de_la_vie.Démarrer(tableau);
+                jeu_de_la_vie.Démarrer();
                 Lecture_tableau_Btn.Content = "\uEFD8";
                 ToolTip.SetTip(Lecture_tableau_Btn, "Arréter simulation");
             }
+
+            // Désactive une partie de l'affichage pour éviter des erreurs
+            Menu_gauche_Panel.IsEnabled =
+            Mode_de_jeu_Combo_box.IsEnabled =
+            Cycle_Number_box.IsEnabled =
+            Menu_doite_Panel.IsEnabled = !jeu_de_la_vie.EstDémarrer;
         }
 
         public async void Sauvegarder_tableau(object sender, RoutedEventArgs e)
@@ -107,25 +111,39 @@ namespace Jeux_de_la_vie.Avalonia
             var résulta = await dialog_de_dossier.ShowAsync(this);
 
             if (résulta != null)
-                Grille_de_jeu.Grille_de_jeu.Save(résulta);
+                Grille_de_jeu.Sauvegarder_tableau(résulta);
         }
 
-        public async void Cycle_Number_box_Value_changed(object sender, int e)
+        public void Mode_de_jeu_Combo_box_Selection_changed(object sender, SelectionChangedEventArgs e)
         {
-
+            jeu_de_la_vie?
+                .Définir_mode_de_jeu((Autocell.Mode_de_jeu)Mode_de_jeu_Combo_box.SelectedIndex);
         }
 
-        public async void Speed_Number_box_Value_changed(object sender, int e)
+        public void Cycle_Number_box_Value_changed(object sender, int e)
         {
+        }
+
+        public void Speed_Number_box_Value_changed(object sender, int e)
+        {
+            jeu_de_la_vie.Définir_la_vitesse((1000 * 100) / e);
         }
 
         private void Jeu_de_la_vie_TableauActualisé(object? sender, bool[,] état_actuel)
         {
-            for (int y = 0; y > état_actuel.GetLength(0); y++)
-                for (int x = 0; x > état_actuel.GetLength(1); x++)
-                {
-                    Grille_de_jeu.Déssiner(état_actuel[y, x], x, y);
-                }
+            //var cellules = new List<Cellule>();
+
+            /*for (int y = 0; y < état_actuel.GetLength(0); y++)
+                for (int x = 0; x < état_actuel.GetLength(1); x++)
+                    cellules.Add(new(état_actuel[y, x], x, y));*/
+
+            Grille_de_jeu.Déssiner(état_actuel);
+        }
+
+        private void Définir_tableau(bool[,] tableau)
+        {
+            tableau_initial = tableau;
+            jeu_de_la_vie.Définir_tableau(tableau_initial);
         }
         #endregion
     }

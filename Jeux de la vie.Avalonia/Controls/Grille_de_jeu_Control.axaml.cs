@@ -1,15 +1,15 @@
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Media.Imaging;
-using Avalonia.Platform;
-using System.ComponentModel;
 using System.Drawing.Imaging;
 using System.IO;
 using SystemBitmap = System.Drawing.Bitmap;
 using Color = System.Drawing.Color;
 using Graphics = System.Drawing.Graphics;
 using SolidBrush = System.Drawing.SolidBrush;
-using System.Diagnostics;
+using Avalonia.Threading;
+using System.Collections.Generic;
+using System;
 
 namespace Jeux_de_la_vie.Avalonia.Controls
 {
@@ -25,6 +25,7 @@ namespace Jeux_de_la_vie.Avalonia.Controls
             Taille_ligne = 1;
             Couleur_cellule = Color.Black;
             Couleur_tableau = Color.White;
+            grille_source = new SystemBitmap(1, 1);
 
             Nouveau_tableau(100, 100);
         }
@@ -41,11 +42,10 @@ namespace Jeux_de_la_vie.Avalonia.Controls
         private double taille_vertical => Taille_ligne * 2 + taille_cellule.Height * Grille_de_jeu.Size.Height;
         private double taille_horizontal => Taille_ligne * 2 + taille_cellule.Width * Grille_de_jeu.Size.Width;
 
-        public Bitmap Grille_de_jeu
+        private Bitmap Grille_de_jeu
         {
             get => Grille_de_jeu_Img.Source as Bitmap ?? new Bitmap(new MemoryStream());
-            private set =>
-                Grille_de_jeu_Img.Source = value;
+            set => Grille_de_jeu_Img.Source = value;
         }
 
         public double Taille_ligne
@@ -54,6 +54,9 @@ namespace Jeux_de_la_vie.Avalonia.Controls
             private set =>
                 Grille_de_jeu_Brd.BorderThickness = new Thickness(value);
         }
+
+        public int Lignes => grille_source.Height;
+        public int Colonnes => grille_source.Width;
         #endregion
 
         #region Methods
@@ -81,6 +84,9 @@ namespace Jeux_de_la_vie.Avalonia.Controls
             Recharger_grille();
         }
 
+        public void Sauvegarder_tableau(string chemin_du_fichier) => Grille_de_jeu.Save(chemin_du_fichier);
+
+        [Obsolete]
         public void Déssiner(bool cellule, int position_vertical, int position_horizontal)
         {
             grille_source.SetPixel(
@@ -91,26 +97,45 @@ namespace Jeux_de_la_vie.Avalonia.Controls
             Recharger_grille();
         }
 
+        public void Déssiner(IEnumerable<Cellule> cellules)
+        {
+            foreach(var cellule in cellules)
+                grille_source.SetPixel(
+                    cellule.Possition.X,
+                    cellule.Possition.Y,
+                    cellule.En_vie ? Couleur_cellule : Couleur_tableau);
+
+            Recharger_grille();
+        }
+
+        public void Déssiner(bool[,] tableau)
+        {
+            for (int x = 0; x < tableau.GetLength(0); x++)
+                for (int y = 0; y < tableau.GetLength(1); y++)
+                    grille_source.SetPixel(
+                    x,
+                    y,
+                    tableau[x, y] ? Couleur_cellule : Couleur_tableau);
+
+            Recharger_grille();
+        }
+
+        [Obsolete]
         public bool[,] Exporter_le_tableau()
         {
             var tableau = new bool[grille_source.Height, grille_source.Width];
-
             var couleur_cellule = Couleur_cellule.ToArgb();
-            /*Debug.Write("");
-            Debug.Write(couleur_cellule);
-            Debug.Write("");*/
 
             for (int y = 0; y < grille_source.Height; y++)
                 for (int x = 0; x < grille_source.Width; x++)
                 {
-                    //Debug.Write(grille_source.GetPixel(x, y).ToArgb());
                     tableau[y, x] = grille_source.GetPixel(x, y).ToArgb() == couleur_cellule;
                 }
 
             return tableau;
         }
 
-        private void Recharger_grille()
+        private void Recharger_grille() => Dispatcher.UIThread.Post(() =>
         {
             using var memory = new MemoryStream();
 
@@ -118,7 +143,7 @@ namespace Jeux_de_la_vie.Avalonia.Controls
 
             memory.Position = 0;
             Grille_de_jeu = new Bitmap(memory);
-        }
+        });
         #endregion
     }
 }

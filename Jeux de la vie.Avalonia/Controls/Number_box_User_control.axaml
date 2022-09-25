@@ -33,7 +33,9 @@
                MinHeight="28" MinWidth="28" Padding="3"
                BorderThickness="0" CornerRadius="0"
                VerticalContentAlignment="Center"
-               HorizontalContentAlignment="Center"/>
+               HorizontalContentAlignment="Center"
+               LostFocus="Number_text_On_lost_focus"
+               KeyUp="Number_text_Key_up"/>
 
       <Rectangle Fill="Gray" Width="1" Height="30" />
 

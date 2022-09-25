@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using System;
 
@@ -11,6 +12,8 @@ namespace Jeux_de_la_vie.Avalonia.Controls
         {
             InitializeComponent();
             DataContext = this;
+
+            suffix = string.Empty;
         }
 
         public string Title
@@ -41,18 +44,47 @@ namespace Jeux_de_la_vie.Avalonia.Controls
             }
         }
 
-        public event EventHandler<int> ValueChanged;
+        public int SmallChange { get; set; } = 1;
+
+        public event EventHandler<int>? ValueChanged;
 
         public void On_Click_up_Button_Click(object sender, RoutedEventArgs e)
         {
-            Number++;
-            ValueChanged.Invoke(this, Number);
+            Number =+ SmallChange;
+            ValueChanged?.Invoke(this, Number);
         }
 
         public void On_Click_down_Button_Click(object sender, RoutedEventArgs e)
         {
-            Number--;
-            ValueChanged.Invoke(this, Number);
+            Number =- SmallChange;
+            ValueChanged?.Invoke(this, Number);
+        }
+
+        private void Number_text_On_lost_focus(object sender, RoutedEventArgs e)
+        {
+            Je_ne();
+        }
+
+        private void Number_text_Key_up(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter || e.Key == Key.Escape)
+                Je_ne();
+        }
+
+        private void Je_ne()
+        {
+            var number = Number_text.Text.Replace(suffix, string.Empty);
+
+            try
+            {
+                Number = Convert.ToInt32(number);
+
+                ValueChanged?.Invoke(this, Number);
+            }
+            catch
+            {
+                Number_text.Text = Number.ToString() + Suffix;
+            }
         }
     }
 }

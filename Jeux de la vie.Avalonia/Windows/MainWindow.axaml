@@ -29,7 +29,8 @@
         </Grid.ColumnDefinitions>
 
         <!-- Gauche (Data In) -->
-        <StackPanel Grid.Column="0" HorizontalAlignment="Left">
+        <StackPanel x:Name="Menu_gauche_Panel" Grid.Column="0"
+                    HorizontalAlignment="Left">
 
           <Button x:Name="Ajouter_tableau_Btn" Click="Charger_tableau"
                   Content="&#xea11;" ToolTip.Tip="Ajout une forme à la zone de jeu"/>
@@ -41,15 +42,23 @@
 
           <Border Classes="Separator"/>
           
-          <Button x:Name="Effacer_tableau_Btn" Click="Modifier_tableau"
+          <Button x:Name="Effacer_tableau_Btn" Click="Effacer_tableau"
                   Content="&#xec9f;" ToolTip.Tip="Efface la zone de jeu"/>
+
+          <Border Classes="Separator"/>
+
+          <Button x:Name="Généreration_aléatoire_tableau_Btn" Click="Généreration_aléatoire_tableau"
+                  Content="&#xf064;" ToolTip.Tip="Regénére aléatoirement la zone de jeu"/>
           
         </StackPanel>
 
         <!-- Centre (Control du jeu) -->
-        <StackPanel Grid.Column="1" HorizontalAlignment="Center">
+        <StackPanel x:Name="Menu_milieu_Panel" Grid.Column="1"
+                    HorizontalAlignment="Center">
 
-          <ComboBox SelectedIndex="0" ToolTip.Tip="Mode de jeu">
+          <ComboBox x:Name="Mode_de_jeu_Combo_box"
+                    SelectedIndex="0" ToolTip.Tip="Mode de jeu"
+                    SelectionChanged="Mode_de_jeu_Combo_box_Selection_changed">
             <ComboBoxItem>Jeu de la vie</ComboBoxItem>
             <ComboBoxItem Content="Day &amp; Night" />
           </ComboBox>
@@ -76,7 +85,8 @@
         </StackPanel>
 
         <!-- Droite (Data Out) -->
-        <StackPanel Grid.Column="2" HorizontalAlignment="Right">
+        <StackPanel x:Name="Menu_doite_Panel" Grid.Column="2"
+                    HorizontalAlignment="Right">
           <Button x:Name="Sauvegarder_tableau_Btn" Click="Sauvegarder_tableau"
                   Content="&#xf0b1;" ToolTip.Tip="Sauvegarder" />
         </StackPanel>
