@@ -4,7 +4,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="using:Jeux_de_la_vie.Avalonia.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        Width="800" Height="860"
+        Width="700" Height="760"
         x:Class="Jeux_de_la_vie.Avalonia.MainWindow"
         Title="Automate cellulaire">
 

@@ -87,6 +87,25 @@ namespace Jeux_de_la_vie.Avalonia.Controls
 
         public void Sauvegarder_tableau(string chemin_du_fichier) => Grille_de_jeu.Save(chemin_du_fichier);
 
+        public void Définir_couleur(Color tableau, Color celulle)
+        {
+
+            Color pixel;
+
+            for (int x = 0; x < grille_source.Width; x++)
+                for (int y = 0; y < grille_source.Height; y++)
+                {
+                    pixel = grille_source.GetPixel(x, y);
+
+                    grille_source.SetPixel(
+                        x, y,
+                        pixel == Couleur_cellule ? celulle : tableau);
+                }
+
+            Couleur_tableau = tableau;
+            Couleur_cellule = celulle;
+        }
+
         public bool Déssiner(bool cellule, int position_vertical, int position_horizontal)
         {
             if (En_cours_dutilisation)

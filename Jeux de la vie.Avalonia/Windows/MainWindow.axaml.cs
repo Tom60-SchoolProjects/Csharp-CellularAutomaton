@@ -15,13 +15,12 @@ namespace Jeux_de_la_vie.Avalonia
         public MainWindow()
         {
             InitializeComponent();
+            Initialisation();
 
-            Grille_de_jeu.Nouveau_tableau(100, 100);
-            tableau_initial = new bool[100, 100];
+            tableau_initial = new bool[
+                Paramètres_de_lapplication.Actuelle.Taille_tableau.Width,
+                Paramètres_de_lapplication.Actuelle.Taille_tableau.Height];
 
-            jeu_de_la_vie = new();
-            jeu_de_la_vie.TableauActualisé += Jeu_de_la_vie_TableauActualisé;
-            Définir_tableau(tableau_initial);
         }
         #endregion
 
@@ -143,23 +142,6 @@ namespace Jeux_de_la_vie.Avalonia
         public void Speed_Number_box_Value_changed(object sender, int e)
         {
             jeu_de_la_vie.Définir_la_vitesse(10000 / e);
-        }
-
-        private void Jeu_de_la_vie_TableauActualisé(object? sender, bool[,] état_actuel)
-        {
-            Grille_de_jeu.Déssiner(état_actuel);
-
-            cycle_actuelle++;
-            Dispatcher.UIThread.Post(() =>
-            {
-                Cycle_Text.Text = $"{cycle_actuelle} / {cycle_maximum}";
-
-                if (cycle_maximum != 0 && cycle_actuelle > cycle_maximum)
-                {
-                    Arrêter_la_génération();
-                    Lecture_tableau_Btn.IsEnabled = false;
-                }
-            });
         }
         #endregion
     }

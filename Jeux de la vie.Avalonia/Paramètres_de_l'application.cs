@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Text.Json;
@@ -7,10 +8,12 @@ namespace Jeux_de_la_vie.Avalonia
 {
     internal class Paramètres_de_lapplication
     {
-        public Size Taille_tableau = new(100, 100);
-        public Color Couleur_tableau = Color.White;
-        public Color Couleur_celulle = Color.Black;
+        public Size Taille_tableau { get; set; } = new(100, 100);
+        public int Couleur_tableau { get; set; } = Color.White.ToArgb();
+        public int Couleur_celulle { get; set; } = Color.Black.ToArgb();
         public string? Dernier_tableau;
+
+        public static event EventHandler? Paramètre_changer;
 
         public static Paramètres_de_lapplication Actuelle
         {
@@ -39,17 +42,23 @@ namespace Jeux_de_la_vie.Avalonia
             }
         }
 
+        /// <summary>
+        /// Aplique les modifications et le notifis au abonnée
+        /// </summary>
+        /// <returns></returns>
         public static bool Sauvegarder()
         {
             try
             {
                 var chemin_du_fichier_de_sauvegarde = Obtenir_le_chemin_du_fichier_de_sauvegarde();
-
-                var flux = File.OpenRead(chemin_du_fichier_de_sauvegarde);
-                var json = JsonSerializer.Serialize(Actuelle);
+                var json = JsonSerializer.Serialize(Actuelle, new JsonSerializerOptions()
+                {
+                    WriteIndented = true,
+                });
 
                 File.WriteAllText(chemin_du_fichier_de_sauvegarde, json);
 
+                Paramètre_changer?.Invoke(null, new EventArgs());
                 return true;
             }
             catch

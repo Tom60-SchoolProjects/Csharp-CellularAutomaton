@@ -74,11 +74,17 @@ namespace Jeux_de_la_vie.Avalonia.Windows
         public void Taille_lignes_TextBox_Input(object? sender, TextInputEventArgs e)
         {
             Appliquer_Button.IsEnabled = true;
+
+            if (!int.TryParse(e.Text, out _))
+                Error(Couleur_cellule_TextBox, "La lignes contient des caractêre invalid");
         }
 
         public void Taille_colonnes_TextBox_Input(object? sender, TextInputEventArgs e)
         {
             Appliquer_Button.IsEnabled = true;
+
+            if (!int.TryParse(e.Text, out _))
+                Error(Couleur_cellule_TextBox, "La colonnes contient des caractêre invalid");
         }
 
         public void Couleur_cellule_TextBox_Input(object? sender, TextInputEventArgs e)
@@ -99,17 +105,12 @@ namespace Jeux_de_la_vie.Avalonia.Windows
 
         public void Appliquer_Button_Click(object sender, RoutedEventArgs e)
         {
-            try { lignes = Convert.ToInt32(Taille_lignes_TextBox.Text); }
-            catch { Error(Taille_lignes_TextBox, "La lignes contient des caractêre invalid"); }
+            lignes = Convert.ToInt32(Taille_lignes_TextBox.Text);
+            colonnes = Convert.ToInt32(Taille_colonnes_TextBox.Text);
+            couleur_cellule = Brush.Parse(Couleur_cellule_TextBox.Text);
+            couleur_tableau = Brush.Parse(Couleur_tableau_TextBox.Text);
 
-            try { colonnes = Convert.ToInt32(Taille_colonnes_TextBox.Text); }
-            catch {  Error(Taille_colonnes_TextBox, "La colonnes contient des caractêre invalid"); }
-
-            try { couleur_cellule = Brush.Parse(Couleur_cellule_TextBox.Text); }
-            catch { Error(Couleur_cellule_TextBox, "La cellule contient des caractêre invalid"); }
-
-            try { couleur_tableau = Brush.Parse(Couleur_tableau_TextBox.Text); }
-            catch { Error(Couleur_tableau_TextBox, "Le tableau contient des caractêre invalid"); }
+            Paramètres_de_lapplication.Sauvegarder();
 
             Appliquer_Button.IsEnabled = false;
         }
@@ -131,6 +132,8 @@ namespace Jeux_de_la_vie.Avalonia.Windows
         {
             textBox.BorderBrush = Brush.Parse("Red");
             Message_derreur_Text.Text = message;
+
+            Appliquer_Button.IsEnabled = false;
         }
 
         private void Propriété_du_tableau_Window_Propriété_changé(object? sender, EventArgs e)

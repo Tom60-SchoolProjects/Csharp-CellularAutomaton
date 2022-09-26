@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Jeux_de_la_vie.Avalonia.Windows;
 using Microsoft.VisualBasic.FileIO;
 using System;
@@ -12,6 +13,15 @@ namespace Jeux_de_la_vie.Avalonia
 {
     public partial class MainWindow : Window
     {
+        private void Initialisation()
+        {
+            Paramètres_de_lapplication.Paramètre_changer += Paramètres_de_lapplication_Paramètre_changer;
+
+            jeu_de_la_vie = new();
+            jeu_de_la_vie.TableauActualisé += Jeu_de_la_vie_TableauActualisé;
+            Définir_tableau(tableau_initial);
+        }
+
         private void Définir_tableau(bool[,] tableau)
         {
             tableau_initial = tableau;
@@ -148,6 +158,32 @@ namespace Jeux_de_la_vie.Avalonia
             }
 
             return tableau;
+        }
+
+        private void Jeu_de_la_vie_TableauActualisé(object? sender, bool[,] état_actuel)
+        {
+            Grille_de_jeu.Déssiner(état_actuel);
+
+            cycle_actuelle++;
+            Dispatcher.UIThread.Post(() =>
+            {
+                Cycle_Text.Text = $"{cycle_actuelle} / {cycle_maximum}";
+
+                if (cycle_maximum != 0 && cycle_actuelle > cycle_maximum)
+                {
+                    Arrêter_la_génération();
+                    Lecture_tableau_Btn.IsEnabled = false;
+                }
+            });
+        }
+
+        private void Paramètres_de_lapplication_Paramètre_changer(object? sender, EventArgs e)
+        {
+
+            Grille_de_jeu.Définir_couleur(
+                Color.FromArgb(Paramètres_de_lapplication.Actuelle.Couleur_tableau),
+                Color.FromArgb(Paramètres_de_lapplication.Actuelle.Couleur_celulle));
+
         }
     }
 }
