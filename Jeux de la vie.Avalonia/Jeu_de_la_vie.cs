@@ -11,7 +11,7 @@ namespace Jeux_de_la_vie.Avalonia
             timer = new();
             timer.Elapsed += Timer_Elapsed;
 
-            Définir_la_vitesse(1000);
+            Définir_la_vitesse(100);
         }
         #endregion
 
@@ -38,7 +38,7 @@ namespace Jeux_de_la_vie.Avalonia
             if (EstDémarrer)
                 Arrêter();
 
-            this.tableau = tableau;
+            this.tableau = (bool[,]?)tableau.Clone();
             TableauActualisé?.Invoke(this, tableau);
         }
 
@@ -68,10 +68,11 @@ namespace Jeux_de_la_vie.Avalonia
         }
 
         /// <summary>
-        /// Définit la vitesse du jeu en milisecondes
+        /// Définit la vitesse du jeu en milisecondes.
+        /// La vitesse peut pas être égale à zéro.
         /// </summary>
         /// <param name="milisecondes"></param>
-        public void Définir_la_vitesse(double milisecondes) => timer.Interval = milisecondes;
+        public void Définir_la_vitesse(double milisecondes) => timer.Interval = Math.Max(1, milisecondes);
 
         private void Timer_Elapsed(object? sender, ElapsedEventArgs e)
         {

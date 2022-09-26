@@ -6,6 +6,9 @@
     <!--Avalonia doesen't support TrimMode=link currently,but we are working on that https://github.com/AvaloniaUI/Avalonia/issues/6892 -->
     <TrimMode>copyused</TrimMode>
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
+    <Product>Automate cellulaire</Product>
+    <RepositoryUrl>https://github.com/Tom60chat/Automate-cellulaire</RepositoryUrl>
+    <NeutralLanguage>fr</NeutralLanguage>
   </PropertyGroup>
   <ItemGroup>
     <None Remove=".gitignore" />

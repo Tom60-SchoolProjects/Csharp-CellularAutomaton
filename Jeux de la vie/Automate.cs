@@ -1,5 +1,8 @@
-﻿namespace Jeux_de_la_vie
+﻿using System;
+
+namespace Jeux_de_la_vie
 {
+    [Obsolete]
     public class Automate
     {
         public static bool[,] Autocell(bool[,] état_actuel)

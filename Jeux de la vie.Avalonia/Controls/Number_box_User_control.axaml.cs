@@ -45,18 +45,28 @@ namespace Jeux_de_la_vie.Avalonia.Controls
         }
 
         public int SmallChange { get; set; } = 1;
+        public int MaximumValue { get; set; } = int.MaxValue;
+        public int MinimumValue { get; set; } = int.MinValue;
 
         public event EventHandler<int>? ValueChanged;
 
         public void On_Click_up_Button_Click(object sender, RoutedEventArgs e)
         {
-            Number =+ SmallChange;
+            Number += SmallChange;
+
+            if (Number > MaximumValue)
+                Number = MaximumValue;
+
             ValueChanged?.Invoke(this, Number);
         }
 
         public void On_Click_down_Button_Click(object sender, RoutedEventArgs e)
         {
-            Number =- SmallChange;
+            Number -= SmallChange;
+
+            if (MinimumValue > Number)
+                Number = MinimumValue;
+
             ValueChanged?.Invoke(this, Number);
         }
 
@@ -73,11 +83,22 @@ namespace Jeux_de_la_vie.Avalonia.Controls
 
         private void Je_ne()
         {
-            var number = Number_text.Text.Replace(suffix, string.Empty);
+            string number;
+
+            if (string.IsNullOrEmpty(suffix))
+                number = Number_text.Text;
+            else
+                number = Number_text.Text.Replace(suffix, string.Empty);
 
             try
             {
                 Number = Convert.ToInt32(number);
+
+                if (MinimumValue > Number)
+                    Number = MinimumValue;
+
+                if (Number > MaximumValue)
+                    Number = MaximumValue;
 
                 ValueChanged?.Invoke(this, Number);
             }

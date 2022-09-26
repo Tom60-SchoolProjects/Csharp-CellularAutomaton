@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jeux de la vie.Console", "J
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jeux de la vie.Avalonia", "Jeux de la vie.Avalonia\Jeux de la vie.Avalonia.csproj", "{7ABE52E1-BD25-4956-9AB2-B0821FFAB29C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Jeux de la vie", "Jeux de la vie\Jeux de la vie.csproj", "{4ACF35E4-CD64-45DA-BE10-DDEBFB3AC849}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Jeux de la vie", "Jeux de la vie\Jeux de la vie.csproj", "{4ACF35E4-CD64-45DA-BE10-DDEBFB3AC849}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

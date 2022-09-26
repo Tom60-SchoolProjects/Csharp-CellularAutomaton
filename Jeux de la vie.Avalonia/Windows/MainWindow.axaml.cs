@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Threading;
 using Jeux_de_la_vie.Avalonia.Windows;
 using System;
 using System.Collections.Generic;
@@ -20,13 +21,15 @@ namespace Jeux_de_la_vie.Avalonia
 
             jeu_de_la_vie = new();
             jeu_de_la_vie.TableauActualisé += Jeu_de_la_vie_TableauActualisé;
-            jeu_de_la_vie.Définir_tableau(tableau_initial);
+            Définir_tableau(tableau_initial);
         }
         #endregion
 
         #region Variables
         Jeu_de_la_vie jeu_de_la_vie;
         bool[,] tableau_initial;
+        int cycle_actuelle = 0;
+        int cycle_maximum = 0;
         #endregion
 
         #region Methods
@@ -37,8 +40,12 @@ namespace Jeux_de_la_vie.Avalonia
             // Création du sélecteur de fichier
             var dialog_de_fichier = new OpenFileDialog()
             {
-                Title = "Selection un tableau au format BMP",
-                Filters = new List<FileDialogFilter> { new FileDialogFilter() { Extensions = new List<string> { "bmp" }, Name = "Fichier Bitmap" } },
+                Title = "Selection un modéle de tableau",
+                Filters = new List<FileDialogFilter> {
+                    new FileDialogFilter() { Extensions = new List<string> { "bmp", "csv" }, Name = "Tout format compatible" },
+                    new FileDialogFilter() { Extensions = new List<string> { "bmp" }, Name = "Fichier Bitmap" },
+                    new FileDialogFilter() { Extensions = new List<string> { "csv" }, Name = "Fichier Comma-separated values" },
+                },
                 AllowMultiple = false
             };
 
@@ -49,9 +56,26 @@ namespace Jeux_de_la_vie.Avalonia
             if (resulta != null && resulta.Length > 0)
             {
                 if (File.Exists(resulta[0]))
-                    Grille_de_jeu.Ajouter_tableau(resulta[0]);
+                {
+                    switch (Path.GetExtension(resulta[0]).ToLower())
+                    {
+                        case ".bmp":
+                            var tableau_bmp = Charger_BMP(resulta[0]);
+                            Ajouter_tableau(tableau_bmp, 0, 0, true);
+                            break;
+
+                        case ".csv":
+                            var tableau_csv = Charger_CSV(resulta[0]);
+                            Ajouter_tableau(tableau_csv, 0, 0, true);
+                            break;
+
+                        default:
+                            Debug.WriteLine("L'extension n'est pas connus");
+                            break;
+                    }
+                }
                 else
-                    Debug.WriteLine("File don't exist");
+                    Debug.WriteLine("Le fichier n'existe pas");
             }
         }
 
@@ -80,23 +104,14 @@ namespace Jeux_de_la_vie.Avalonia
         public void Lire_tableau(object sender, RoutedEventArgs e)
         {
             if (jeu_de_la_vie.EstDémarrer)
-            {
-                jeu_de_la_vie.Arrêter();
-                Lecture_tableau_Btn.Content = "\uF00B";
-                ToolTip.SetTip(Lecture_tableau_Btn, "Démarrer simulation");
-            }
+                Arrêter_la_génération();
             else
-            {
-                jeu_de_la_vie.Démarrer();
-                Lecture_tableau_Btn.Content = "\uEFD8";
-                ToolTip.SetTip(Lecture_tableau_Btn, "Arréter simulation");
-            }
+                Démarrer_la_génération();
 
-            // Désactive une partie de l'affichage pour éviter des erreurs
-            Menu_gauche_Panel.IsEnabled =
-            Mode_de_jeu_Combo_box.IsEnabled =
-            Cycle_Number_box.IsEnabled =
-            Menu_doite_Panel.IsEnabled = !jeu_de_la_vie.EstDémarrer;
+        }
+        public void Reinitialiser_tableau(object sender, RoutedEventArgs e)
+        {
+            Définir_tableau(tableau_initial);
         }
 
         public async void Sauvegarder_tableau(object sender, RoutedEventArgs e)
@@ -122,28 +137,29 @@ namespace Jeux_de_la_vie.Avalonia
 
         public void Cycle_Number_box_Value_changed(object sender, int e)
         {
+            cycle_maximum = e;
         }
 
         public void Speed_Number_box_Value_changed(object sender, int e)
         {
-            jeu_de_la_vie.Définir_la_vitesse((1000 * 100) / e);
+            jeu_de_la_vie.Définir_la_vitesse(10000 / e);
         }
 
         private void Jeu_de_la_vie_TableauActualisé(object? sender, bool[,] état_actuel)
         {
-            //var cellules = new List<Cellule>();
-
-            /*for (int y = 0; y < état_actuel.GetLength(0); y++)
-                for (int x = 0; x < état_actuel.GetLength(1); x++)
-                    cellules.Add(new(état_actuel[y, x], x, y));*/
-
             Grille_de_jeu.Déssiner(état_actuel);
-        }
 
-        private void Définir_tableau(bool[,] tableau)
-        {
-            tableau_initial = tableau;
-            jeu_de_la_vie.Définir_tableau(tableau_initial);
+            cycle_actuelle++;
+            Dispatcher.UIThread.Post(() =>
+            {
+                Cycle_Text.Text = $"{cycle_actuelle} / {cycle_maximum}";
+
+                if (cycle_maximum != 0 && cycle_actuelle > cycle_maximum)
+                {
+                    Arrêter_la_génération();
+                    Lecture_tableau_Btn.IsEnabled = false;
+                }
+            });
         }
         #endregion
     }

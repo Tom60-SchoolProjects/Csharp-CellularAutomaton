@@ -4,8 +4,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:controls="using:Jeux_de_la_vie.Avalonia.Controls"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Width="800" Height="860"
         x:Class="Jeux_de_la_vie.Avalonia.MainWindow"
-        Title="Jeux_de_la_vie.Avalonia">
+        Title="Automate cellulaire">
 
   <Grid>
     <Grid.RowDefinitions>
@@ -56,7 +57,8 @@
         <StackPanel x:Name="Menu_milieu_Panel" Grid.Column="1"
                     HorizontalAlignment="Center">
 
-          <ComboBox x:Name="Mode_de_jeu_Combo_box"
+          <ComboBox x:Name="Mode_de_jeu_Combo_box" Height="30"
+                    VerticalContentAlignment="Bottom"
                     SelectedIndex="0" ToolTip.Tip="Mode de jeu"
                     SelectionChanged="Mode_de_jeu_Combo_box_Selection_changed">
             <ComboBoxItem>Jeu de la vie</ComboBoxItem>
@@ -66,20 +68,37 @@
           <Border Classes="Separator"/>
 
           <controls:Number_box_User_control x:Name="Cycle_Number_box"
-                                            Title="&#xf064;" Number="123"
-                                            ValueChanged="Cycle_Number_box_Value_changed" />
+                Title="&#xf064;" Number="0"
+                ToolTip.Tip="Nombre de génération à éxecuter (0 : infini)"
+                IsVisible="True" MinimumValue="0"
+                ValueChanged="Cycle_Number_box_Value_changed" />
+
+          <Border x:Name="Cycle_Text_border" Height="30" IsVisible="False"
+                  ToolTip.Tip="Nombre de génération exécuté"
+                  BorderThickness="1" BorderBrush="Gray" CornerRadius="4" >
+            <TextBlock x:Name="Cycle_Text" Text="0 / 10" Margin="8"
+                       VerticalAlignment="Center"/>
+          </Border>
 
           <Border Classes="Separator"/>
 
           <controls:Number_box_User_control x:Name="Speed_Number_box"
-                                            Title="&#xf177;" Number="100" Suffix="%"
-                                            ValueChanged="Speed_Number_box_Value_changed"/>
+                    Title="&#xf177;" Number="100" Suffix="%"
+                    SmallChange="5" MaximumValue="10000" MinimumValue="5"
+                    ToolTip.Tip="Vitesse de génération"
+                    ValueChanged="Speed_Number_box_Value_changed"/>
           
           <Border Classes="Separator"/>
           
           <Button x:Name="Lecture_tableau_Btn" Content="&#xf00b;"
                   Click="Lire_tableau"
-                  ToolTip.Tip="Démarrer simulation"/>
+                  ToolTip.Tip="Démarrer ou reprend la génération"/>
+
+          <Border Classes="Separator"/>
+
+          <Button x:Name="Reinitialiser_tableau_Btn" Content="&#xf1a1;"
+                  Click="Reinitialiser_tableau"
+                  ToolTip.Tip="Revenir au cicle zéro"/>
           <!--Border Classes="Separator"/-->
 
         </StackPanel>

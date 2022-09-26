@@ -15,7 +15,7 @@
         /// <param name="table_size"></param>
         public static bool[,] Cycle_de_jeu(bool[,] tableau_initial, Mode_de_jeu mode_de_jeu)
         {
-            var tableau_suivant = tableau_initial;
+            bool[,] tableau_suivant = (bool[,])tableau_initial.Clone();
             bool[,] neighbourhood_matrix;
             int cpt;
 

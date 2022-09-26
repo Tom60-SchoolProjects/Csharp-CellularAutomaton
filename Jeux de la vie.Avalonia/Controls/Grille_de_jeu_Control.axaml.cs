@@ -36,6 +36,7 @@ namespace Jeux_de_la_vie.Avalonia.Controls
         private SystemBitmap grille_source;
         private Color Couleur_cellule;
         private Color Couleur_tableau;
+        private bool En_cours_dutilisation;
         #endregion
 
         #region Properties
@@ -86,38 +87,40 @@ namespace Jeux_de_la_vie.Avalonia.Controls
 
         public void Sauvegarder_tableau(string chemin_du_fichier) => Grille_de_jeu.Save(chemin_du_fichier);
 
-        [Obsolete]
-        public void Déssiner(bool cellule, int position_vertical, int position_horizontal)
+        public bool Déssiner(bool cellule, int position_vertical, int position_horizontal)
         {
+            if (En_cours_dutilisation)
+                return false;
+
+            En_cours_dutilisation = true;
+
             grille_source.SetPixel(
                 position_vertical,
                 position_horizontal,
                 cellule ? Couleur_cellule : Couleur_tableau);
 
+            En_cours_dutilisation = false;
             Recharger_grille();
+
+            return true;
         }
 
-        public void Déssiner(IEnumerable<Cellule> cellules)
+        public bool Déssiner(bool[,] tableau)
         {
-            foreach(var cellule in cellules)
-                grille_source.SetPixel(
-                    cellule.Possition.X,
-                    cellule.Possition.Y,
-                    cellule.En_vie ? Couleur_cellule : Couleur_tableau);
+            if (En_cours_dutilisation)
+                return false;
 
-            Recharger_grille();
-        }
+            En_cours_dutilisation = true;
 
-        public void Déssiner(bool[,] tableau)
-        {
             for (int x = 0; x < tableau.GetLength(0); x++)
                 for (int y = 0; y < tableau.GetLength(1); y++)
-                    grille_source.SetPixel(
-                    x,
-                    y,
-                    tableau[x, y] ? Couleur_cellule : Couleur_tableau);
+                    grille_source.SetPixel(x, y,
+                        tableau[x, y] ? Couleur_cellule : Couleur_tableau);
 
+            En_cours_dutilisation = false;
             Recharger_grille();
+
+            return true;
         }
 
         [Obsolete]
@@ -128,21 +131,26 @@ namespace Jeux_de_la_vie.Avalonia.Controls
 
             for (int y = 0; y < grille_source.Height; y++)
                 for (int x = 0; x < grille_source.Width; x++)
-                {
                     tableau[y, x] = grille_source.GetPixel(x, y).ToArgb() == couleur_cellule;
-                }
 
             return tableau;
         }
 
         private void Recharger_grille() => Dispatcher.UIThread.Post(() =>
         {
+            if (En_cours_dutilisation)
+                return;
+
+            En_cours_dutilisation = true;
             using var memory = new MemoryStream();
 
             grille_source.Save(memory, ImageFormat.Bmp);
 
             memory.Position = 0;
             Grille_de_jeu = new Bitmap(memory);
+
+            En_cours_dutilisation = false;
+            return;
         });
         #endregion
     }
