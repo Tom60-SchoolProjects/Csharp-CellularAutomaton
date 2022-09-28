@@ -1,4 +1,6 @@
-﻿namespace Jeux_de_la_vie
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Jeux_de_la_vie
 {
     public static class Autocell
     {
@@ -9,45 +11,33 @@
         }
 
         /// <summary>
-        /// Run a round
+        /// Exécuter un cycle
         /// </summary>
-        /// <param name="gameboard_init"></param>
-        /// <param name="table_size"></param>
+        /// <param name="tableau_initial"></param>
         public static bool[,] Cycle_de_jeu(bool[,] tableau_initial, Mode_de_jeu mode_de_jeu)
         {
             bool[,] tableau_suivant = (bool[,])tableau_initial.Clone();
-            bool[,] neighbourhood_matrix;
-            int cpt;
+            bool[,] tableau_voisins;
+            int compteur;
 
             for (int x = 0; x < tableau_initial.GetLength(0); x++)
             {
                 for (int y = 0; y < tableau_initial.GetLength(1); y++)
                 {
-                    neighbourhood_matrix = Neighbourhood_Matrix(tableau_initial, x, y);
-                    cpt = 0;
+                    tableau_voisins = Tableau_voisins(tableau_initial, x, y);
+                    compteur = 0;
 
-                    foreach (var elem in neighbourhood_matrix)
-                        cpt += elem ? 1 : 0;
+                    foreach (var élément in tableau_voisins)
+                        compteur += élément ? 1 : 0;
 
                     if (tableau_initial[x, y] == true)
-                        cpt--;
+                        compteur--;
 
-                    switch (mode_de_jeu)
+                    tableau_suivant[x, y] = mode_de_jeu switch
                     {
-                        case Mode_de_jeu.Jeu_de_la_vie:
-                            if (tableau_initial[x, y] && cpt != 2 && cpt != 3)
-                                tableau_suivant[x, y] = false;
-                            else if (!tableau_initial[x, y] && (cpt == 3))
-                                tableau_suivant[x, y] = true;
-                            break;
-
-                        case Mode_de_jeu.Day_and_Night:
-                            if (tableau_initial[x, y] && cpt != 3 && cpt != 6 && cpt != 7 && cpt != 8)
-                                tableau_suivant[x, y] = true;
-                            else if (!tableau_initial[x, y] && (cpt != 0 && cpt != 1 && cpt != 2 && cpt != 5 && cpt != 9))
-                                tableau_suivant[x, y] = false;
-                            break;
-                    }
+                        Mode_de_jeu.Day_and_Night => Calcul_day_and_night(tableau_initial[x, y], compteur),
+                        _ or Mode_de_jeu.Jeu_de_la_vie => Calcul_jeu_de_la_vie(tableau_initial[x, y], compteur),
+                    };
 
                 }
             }
@@ -55,15 +45,42 @@
             return tableau_suivant;
         }
 
-        /// <summary>
-        /// Create the neighbourhood matrix of the cell indexed
+        /// <summary> 
+        /// Si tableau_initial[x, y] et compteur n’est pas égale à 2 et compteur n’est pas égale à 3 faire
+        /// tableau_suivant[x, y] = false
+        /// Sinon si
         /// </summary>
-        /// <param name="gameboard"></param>
-        /// <param name="table_size"></param>
-        /// <param name="x_index"></param>
-        /// <param name="y_index"></param>
-        /// <returns>The neighbourhood matrix</returns>
-        private static bool[,] Neighbourhood_Matrix(bool[,] gameboard, int x_index, int y_index)
+        /// <param name="cellule"></param>
+        /// <param name="compteur"></param>
+        /// <returns></returns>
+        private static bool Calcul_jeu_de_la_vie(bool cellule, int compteur)
+        {
+            if (cellule && compteur != 2 && compteur != 3)
+                return false;
+            else if (!cellule && compteur == 3)
+                return true;
+            else
+                return cellule;
+        }
+
+        private static bool Calcul_day_and_night(bool cellule, int compteur)
+        {
+            if (cellule && compteur != 3 && compteur != 6 && compteur != 7 && compteur != 8)
+                return false;
+            else if (!cellule && compteur != 0 && compteur != 1 && compteur != 2 && compteur != 5 && compteur != 9)
+                return true;
+            else
+                return cellule;
+        }
+
+        /// <summary>
+        /// Créer la matrice de voisinage de la cellule indexée
+        /// </summary>
+        /// <param name="tableau_initial"></param>
+        /// <param name="index_x"></param>
+        /// <param name="index_y"></param>
+        /// <returns>Le tableau des voisins</returns>
+        private static bool[,] Tableau_voisins(bool[,] tableau_initial, int index_x, int index_y)
         {
             // Pas de test sur l'existence de la cellule dans le gameboard car cela sera gérer
             // par des clics à la souris sur les cellules directement
@@ -74,12 +91,12 @@
                 for (int y = 0; y < 3; y++)
                 {
                     // Put 0 if the index is outside the bounds of the gameboard
-                    if (x_index - 1 + x < 0 || x_index - 1 + x > gameboard.GetLength(0) - 1
-                        || y_index - 1 + y < 0 || y_index - 1 + y > gameboard.GetLength(1) - 1)
+                    if (index_x - 1 + x < 0 || index_x - 1 + x > tableau_initial.GetLength(0) - 1
+                        || index_y - 1 + y < 0 || index_y - 1 + y > tableau_initial.GetLength(1) - 1)
                         neighbourhood_matrix[x, y] = false;
                     // Put the value of the gameboard in the neighbourhood_matrix
                     else
-                        neighbourhood_matrix[x, y] = gameboard[x_index - 1 + x, y_index - 1 + y];
+                        neighbourhood_matrix[x, y] = tableau_initial[index_x - 1 + x, index_y - 1 + y];
                 }
             }
 

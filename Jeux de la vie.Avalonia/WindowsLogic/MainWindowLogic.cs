@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
+using Avalonia.Media;
 using Avalonia.Threading;
 using Jeux_de_la_vie.Avalonia.Windows;
 using Microsoft.VisualBasic.FileIO;
@@ -8,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
+using Color = Avalonia.Media.Color;
 
 namespace Jeux_de_la_vie.Avalonia
 {
@@ -17,9 +19,12 @@ namespace Jeux_de_la_vie.Avalonia
         {
             Paramètres_de_lapplication.Paramètre_changer += Paramètres_de_lapplication_Paramètre_changer;
 
-            jeu_de_la_vie = new();
             jeu_de_la_vie.TableauActualisé += Jeu_de_la_vie_TableauActualisé;
-            Définir_tableau(tableau_initial);
+            Actuallisé_propriété();
+
+            if (Paramètres_de_lapplication.Dernier_tableau != null &&
+                Essayer_de_charger_un_fichier(Paramètres_de_lapplication.Dernier_tableau, out var tableau))
+                Ajouter_tableau(tableau!, 0, 0, true);
         }
 
         private void Définir_tableau(bool[,] tableau)
@@ -88,6 +93,33 @@ namespace Jeux_de_la_vie.Avalonia
                         tableau[x, y];
 
             Définir_tableau(nouveau_tableau);
+        }
+
+        private bool Essayer_de_charger_un_fichier(string path, out bool[,]? tableau)
+        {
+            tableau = null;
+
+            if (File.Exists(path))
+            {
+                switch (Path.GetExtension(path).ToLower())
+                {
+                    case ".bmp":
+                        tableau = Charger_BMP(path);
+                        break;
+
+                    case ".csv":
+                        tableau = Charger_CSV(path);
+                        break;
+
+                    default:
+                        Debug.WriteLine("L'extension n'est pas connus");
+                        break;
+                }
+            }
+            else
+                Debug.WriteLine("Le fichier n'existe pas");
+
+            return tableau != null;
         }
 
         private bool[,] Charger_BMP(string path)
@@ -179,11 +211,23 @@ namespace Jeux_de_la_vie.Avalonia
 
         private void Paramètres_de_lapplication_Paramètre_changer(object? sender, EventArgs e)
         {
+            Actuallisé_propriété();
+        }
 
+        private void Actuallisé_propriété()
+        {
             Grille_de_jeu.Définir_couleur(
-                Color.FromArgb(Paramètres_de_lapplication.Actuelle.Couleur_tableau),
-                Color.FromArgb(Paramètres_de_lapplication.Actuelle.Couleur_celulle));
+                Color.FromUInt32(Paramètres_de_lapplication.Couleur_tableau),
+                Color.FromUInt32(Paramètres_de_lapplication.Couleur_celulle));
 
+            var nouveau_tableau = new bool[
+                Paramètres_de_lapplication.Taille_tableau_horizontal, // X
+                Paramètres_de_lapplication.Taille_tableau_vertical]; // Y
+
+            Grille_de_jeu.Nouveau_tableau(
+                nouveau_tableau.GetLength(0),
+                nouveau_tableau.GetLength(1));
+            Définir_tableau(nouveau_tableau);
         }
     }
 }

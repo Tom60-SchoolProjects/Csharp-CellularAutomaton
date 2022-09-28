@@ -8,6 +8,8 @@ namespace Jeux_de_la_vie.Avalonia
     {
         public override void Initialize()
         {
+            Paramètres_de_lapplication.Charger();
+
             AvaloniaXamlLoader.Load(this);
         }
 

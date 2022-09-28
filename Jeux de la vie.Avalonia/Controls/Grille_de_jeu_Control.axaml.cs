@@ -4,12 +4,13 @@ using Avalonia.Media.Imaging;
 using System.Drawing.Imaging;
 using System.IO;
 using SystemBitmap = System.Drawing.Bitmap;
-using Color = System.Drawing.Color;
 using Graphics = System.Drawing.Graphics;
 using SolidBrush = System.Drawing.SolidBrush;
 using Avalonia.Threading;
 using System.Collections.Generic;
 using System;
+using Avalonia.Media;
+using Jeux_de_la_vie.Avalonia.Extensions;
 
 namespace Jeux_de_la_vie.Avalonia.Controls
 {
@@ -20,19 +21,14 @@ namespace Jeux_de_la_vie.Avalonia.Controls
         {
             InitializeComponent();
 
-            //grille_source = new Bitmap();
-            taille_cellule = new Size(4, 4);
             Taille_ligne = 1;
-            Couleur_cellule = Color.Black;
-            Couleur_tableau = Color.White;
+            Couleur_cellule = Colors.Black;
+            Couleur_tableau = Colors.White;
             grille_source = new SystemBitmap(1, 1);
-
-            Nouveau_tableau(100, 100);
         }
         #endregion
 
         #region Variables
-        private Size taille_cellule;
         private SystemBitmap grille_source;
         private Color Couleur_cellule;
         private Color Couleur_tableau;
@@ -40,9 +36,6 @@ namespace Jeux_de_la_vie.Avalonia.Controls
         #endregion
 
         #region Properties
-        private double taille_vertical => Taille_ligne * 2 + taille_cellule.Height * Grille_de_jeu.Size.Height;
-        private double taille_horizontal => Taille_ligne * 2 + taille_cellule.Width * Grille_de_jeu.Size.Width;
-
         private Bitmap Grille_de_jeu
         {
             get => Grille_de_jeu_Img.Source as Bitmap ?? new Bitmap(new MemoryStream());
@@ -75,9 +68,16 @@ namespace Jeux_de_la_vie.Avalonia.Controls
 
         public void Nouveau_tableau(int taille_vertical, int taille_horizontal)
         {
+            if (taille_vertical < 1)
+                taille_vertical = 1;
+
+            if (taille_horizontal < 1)
+                taille_horizontal = 1;
+
             grille_source = new SystemBitmap(taille_vertical, taille_horizontal);
+
             using (var gfx = Graphics.FromImage(grille_source))
-            using (var brush = new SolidBrush(Couleur_tableau))
+            using (var brush = new SolidBrush(Couleur_tableau.ToNativeColor()))
             {
                 gfx.FillRectangle(brush, 0, 0, taille_vertical, taille_horizontal);
             }
@@ -89,8 +89,7 @@ namespace Jeux_de_la_vie.Avalonia.Controls
 
         public void Définir_couleur(Color tableau, Color celulle)
         {
-
-            Color pixel;
+            System.Drawing.Color pixel;
 
             for (int x = 0; x < grille_source.Width; x++)
                 for (int y = 0; y < grille_source.Height; y++)
@@ -99,7 +98,7 @@ namespace Jeux_de_la_vie.Avalonia.Controls
 
                     grille_source.SetPixel(
                         x, y,
-                        pixel == Couleur_cellule ? celulle : tableau);
+                        pixel == Couleur_cellule.ToNativeColor() ? celulle.ToNativeColor() : tableau.ToNativeColor());
                 }
 
             Couleur_tableau = tableau;
@@ -116,7 +115,7 @@ namespace Jeux_de_la_vie.Avalonia.Controls
             grille_source.SetPixel(
                 position_vertical,
                 position_horizontal,
-                cellule ? Couleur_cellule : Couleur_tableau);
+                cellule ? Couleur_cellule.ToNativeColor() : Couleur_tableau.ToNativeColor());
 
             En_cours_dutilisation = false;
             Recharger_grille();
@@ -134,25 +133,12 @@ namespace Jeux_de_la_vie.Avalonia.Controls
             for (int x = 0; x < tableau.GetLength(0); x++)
                 for (int y = 0; y < tableau.GetLength(1); y++)
                     grille_source.SetPixel(x, y,
-                        tableau[x, y] ? Couleur_cellule : Couleur_tableau);
+                        tableau[x, y] ? Couleur_cellule.ToNativeColor() : Couleur_tableau.ToNativeColor());
 
             En_cours_dutilisation = false;
             Recharger_grille();
 
             return true;
-        }
-
-        [Obsolete]
-        public bool[,] Exporter_le_tableau()
-        {
-            var tableau = new bool[grille_source.Height, grille_source.Width];
-            var couleur_cellule = Couleur_cellule.ToArgb();
-
-            for (int y = 0; y < grille_source.Height; y++)
-                for (int x = 0; x < grille_source.Width; x++)
-                    tableau[y, x] = grille_source.GetPixel(x, y).ToArgb() == couleur_cellule;
-
-            return tableau;
         }
 
         private void Recharger_grille() => Dispatcher.UIThread.Post(() =>

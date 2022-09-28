@@ -33,11 +33,13 @@
                 Orientation="Horizontal" Spacing="10">
       <TextBox x:Name="Taille_lignes_TextBox"
                Text="100"
-               UseFloatingWatermark="True" Watermark="Lignes"/>
+               UseFloatingWatermark="True" Watermark="Lignes"
+               KeyUp="Taille_lignes_TextBox_KeyUp"/>
       <TextBlock Text="X" VerticalAlignment="Center"/>
       <TextBox x:Name="Taille_colonnes_TextBox"
                Text="80"
-               UseFloatingWatermark="True" Watermark="Colonnes"/>
+               UseFloatingWatermark="True" Watermark="Colonnes"
+               KeyUp="Taille_colonnes_TextBox_KeyUp"/>
     </StackPanel>
 
     <!-- Taille du tableau -->
@@ -55,7 +57,8 @@
       <TextBox x:Name="Couleur_cellule_TextBox"
                MinWidth="80" HorizontalAlignment="Left"
                Text="#FAFAFA"
-               UseFloatingWatermark="True" Watermark="Cellule"/>
+               UseFloatingWatermark="True" Watermark="Cellule"
+               KeyUp="Couleur_cellule_TextBox_KeyUo"/>
     </StackPanel>
     <StackPanel Grid.Row="8" Margin="8" Orientation="Horizontal" Spacing="10">
       <Border x:Name="Couleur_tableau_Border"
@@ -66,7 +69,8 @@
       <TextBox x:Name="Couleur_tableau_TextBox"
                MinWidth="80"  HorizontalAlignment="Left"
                Text="#141516"
-               UseFloatingWatermark="True" Watermark="Tableau"/>
+               UseFloatingWatermark="True" Watermark="Tableau"
+               KeyUp="Couleur_tableau_TextBox_KeyUp"/>
     </StackPanel>
 
     <!-- Boutons de navigation -->

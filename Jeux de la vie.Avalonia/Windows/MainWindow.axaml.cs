@@ -15,12 +15,11 @@ namespace Jeux_de_la_vie.Avalonia
         public MainWindow()
         {
             InitializeComponent();
+
+            tableau_initial = new bool[1,1];
+            jeu_de_la_vie = new();
+
             Initialisation();
-
-            tableau_initial = new bool[
-                Paramètres_de_lapplication.Actuelle.Taille_tableau.Width,
-                Paramètres_de_lapplication.Actuelle.Taille_tableau.Height];
-
         }
         #endregion
 
@@ -54,37 +53,14 @@ namespace Jeux_de_la_vie.Avalonia
             // Charger le fichier selectionner si il existe
             if (resulta != null && resulta.Length > 0)
             {
-                if (File.Exists(resulta[0]))
-                {
-                    switch (Path.GetExtension(resulta[0]).ToLower())
-                    {
-                        case ".bmp":
-                            var tableau_bmp = Charger_BMP(resulta[0]);
-                            Ajouter_tableau(tableau_bmp, 0, 0, true);
-                            break;
-
-                        case ".csv":
-                            var tableau_csv = Charger_CSV(resulta[0]);
-                            Ajouter_tableau(tableau_csv, 0, 0, true);
-                            break;
-
-                        default:
-                            Debug.WriteLine("L'extension n'est pas connus");
-                            break;
-                    }
-                }
-                else
-                    Debug.WriteLine("Le fichier n'existe pas");
+                if (Essayer_de_charger_un_fichier(resulta[0], out var tableau))
+                    Ajouter_tableau(tableau!, 0, 0, true);
             }
         }
 
         public void Modifier_tableau(object sender, RoutedEventArgs e)
         {
-            var fenétre_propriété_du_tableau = new Propriété_du_tableau_Window()
-            {
-                Lignes = Grille_de_jeu.Lignes,
-                Colonnes = Grille_de_jeu.Colonnes,
-            };
+            var fenétre_propriété_du_tableau = new Propriété_du_tableau_Window();
             fenétre_propriété_du_tableau.Show();
         }
 

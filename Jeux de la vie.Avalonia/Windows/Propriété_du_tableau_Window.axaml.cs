@@ -1,7 +1,10 @@
 ﻿using Avalonia.Controls;
+using Avalonia.Controls.Shapes;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Media;
+using Avalonia.Media.Immutable;
+using Jeux_de_la_vie.Avalonia.Extensions;
 using System;
 
 namespace Jeux_de_la_vie.Avalonia.Windows
@@ -12,27 +15,33 @@ namespace Jeux_de_la_vie.Avalonia.Windows
         public Propriété_du_tableau_Window()
         {
             InitializeComponent();
-            Définir_les_événements();
+            //Définir_les_événements();
 
             Appliquer_Button.IsEnabled = false;
             Message_derreur_Text.Text = "";
             Propriété_changé += Propriété_du_tableau_Window_Propriété_changé;
+
+            Lignes = Paramètres_de_lapplication.Taille_tableau_horizontal;
+            Colonnes = Paramètres_de_lapplication.Taille_tableau_vertical;
+            Couleur_cellule = new SolidColorBrush(Color.FromUInt32(Paramètres_de_lapplication.Couleur_celulle));
+            Couleur_tableau = new SolidColorBrush(Color.FromUInt32(Paramètres_de_lapplication.Couleur_tableau));
         }
         #endregion
 
         #region Variables
-        private int lignes;
-        private int colonnes;
-        private IBrush couleur_cellule;
-        private IBrush couleur_tableau;
+        private uint? lignes;
+        private uint? colonnes;
+        private IBrush? couleur_cellule;
+        private IBrush? couleur_tableau;
 
-        public event EventHandler<EventArgs> Propriété_changé;
+        public event EventHandler<EventArgs>? Propriété_changé;
         #endregion
 
         #region Properties
-        public int Lignes
+        /// <summary> X </summary>
+        public uint Lignes
         {
-            get => lignes;
+            get => lignes ?? 0;
             set
             {
                 Taille_lignes_TextBox.Text = value.ToString();
@@ -40,9 +49,10 @@ namespace Jeux_de_la_vie.Avalonia.Windows
             }
         }
 
-        public int Colonnes
+        /// <summary> Y </summary>
+        public uint Colonnes
         {
-            get => colonnes;
+            get => colonnes ?? 0;
             set
             {
                 Taille_colonnes_TextBox.Text = value.ToString();
@@ -52,65 +62,93 @@ namespace Jeux_de_la_vie.Avalonia.Windows
 
         public IBrush Couleur_cellule
         {
-            get => couleur_cellule;
+            get => couleur_cellule ?? Brushes.Black;
             set
             {
                 Couleur_cellule_TextBox.Text = value.ToString();
                 couleur_cellule = value;
+                Couleur_cellule_Border.Background = value;
             }
         }
         public IBrush Couleur_tableau
         {
-            get => couleur_tableau;
+            get => couleur_tableau ?? Brushes.White;
             set
             {
                 Couleur_tableau_TextBox.Text = value.ToString();
                 couleur_tableau = value;
+                Couleur_tableau_Border.Background = value;
             }
         }
         #endregion
 
         #region Methods
-        public void Taille_lignes_TextBox_Input(object? sender, TextInputEventArgs e)
+        public void Taille_lignes_TextBox_KeyUp(object? sender, KeyEventArgs e)
         {
             Appliquer_Button.IsEnabled = true;
 
-            if (!int.TryParse(e.Text, out _))
-                Error(Couleur_cellule_TextBox, "La lignes contient des caractêre invalid");
+            if (uint.TryParse(Taille_lignes_TextBox.Text, out var lignes))
+            {
+                this.lignes = lignes;
+                Taille_lignes_TextBox.BorderBrush = Brushes.Gray;
+            }
+            else
+                Error(Taille_lignes_TextBox, "La lignes contient des caractêre invalid");
         }
 
-        public void Taille_colonnes_TextBox_Input(object? sender, TextInputEventArgs e)
+        public void Taille_colonnes_TextBox_KeyUp(object? sender, KeyEventArgs e)
         {
             Appliquer_Button.IsEnabled = true;
 
-            if (!int.TryParse(e.Text, out _))
-                Error(Couleur_cellule_TextBox, "La colonnes contient des caractêre invalid");
+            if (uint.TryParse(Taille_colonnes_TextBox.Text, out var colonnes))
+            {
+                this.colonnes = colonnes;
+                Taille_colonnes_TextBox.BorderBrush = Brushes.Gray;
+            }
+            else
+                Error(Taille_colonnes_TextBox, "La colonnes contient des caractêre invalid");
         }
 
-        public void Couleur_cellule_TextBox_Input(object? sender, TextInputEventArgs e)
+        public void Couleur_cellule_TextBox_KeyUo(object? sender, KeyEventArgs e)
         {
             Appliquer_Button.IsEnabled = true;
 
-            try { Couleur_cellule_Border.Background = Brush.Parse(Couleur_cellule_TextBox.Text); }
+            try
+            {
+                couleur_cellule = Brush.Parse(Couleur_cellule_TextBox.Text);
+                Couleur_cellule_TextBox.BorderBrush = Brushes.Gray;
+                Couleur_cellule_Border.Background = couleur_cellule;
+            }
             catch { Error(Couleur_cellule_TextBox, "La cellule contient des caractêre invalid"); }
         }
 
-        public void Couleur_tableau_TextBox_Input(object? sender, TextInputEventArgs e)
+        public void Couleur_tableau_TextBox_KeyUp(object? sender, KeyEventArgs e)
         {
             Appliquer_Button.IsEnabled = true;
 
-            try { Couleur_tableau_Border.Background = Brush.Parse(Couleur_tableau_TextBox.Text); }
+            try
+            {
+                couleur_tableau = Brush.Parse(Couleur_tableau_TextBox.Text);
+                Couleur_tableau_TextBox.BorderBrush = Brushes.Gray;
+                Couleur_tableau_Border.Background = couleur_tableau;
+            }
             catch { Error(Couleur_tableau_TextBox, "Le tableau contient des caractêre invalid"); }
         }
 
         public void Appliquer_Button_Click(object sender, RoutedEventArgs e)
         {
-            lignes = Convert.ToInt32(Taille_lignes_TextBox.Text);
-            colonnes = Convert.ToInt32(Taille_colonnes_TextBox.Text);
-            couleur_cellule = Brush.Parse(Couleur_cellule_TextBox.Text);
-            couleur_tableau = Brush.Parse(Couleur_tableau_TextBox.Text);
+            if (lignes != null)
+                Paramètres_de_lapplication.Taille_tableau_horizontal = lignes.Value;
+            if (colonnes != null)
+                Paramètres_de_lapplication.Taille_tableau_vertical = colonnes.Value;
+            if (couleur_cellule != null)
+                Paramètres_de_lapplication.Couleur_celulle = couleur_cellule.ToColor().ToUint32();
+            if (couleur_tableau != null)
+                Paramètres_de_lapplication.Couleur_tableau = couleur_tableau.ToColor().ToUint32();
 
             Paramètres_de_lapplication.Sauvegarder();
+
+            Propriété_changé?.Invoke(this, new EventArgs());
 
             Appliquer_Button.IsEnabled = false;
         }
@@ -120,13 +158,13 @@ namespace Jeux_de_la_vie.Avalonia.Windows
             Close();
         }
 
-        private void Définir_les_événements()
+        /*private void Définir_les_événements()
         {
             Taille_lignes_TextBox.AddHandler(TextInputEvent, Taille_lignes_TextBox_Input, RoutingStrategies.Tunnel);
             Taille_colonnes_TextBox.AddHandler(TextInputEvent, Taille_colonnes_TextBox_Input, RoutingStrategies.Tunnel);
             Couleur_cellule_TextBox.AddHandler(TextInputEvent, Couleur_cellule_TextBox_Input, RoutingStrategies.Tunnel);
             Couleur_tableau_TextBox.AddHandler(TextInputEvent, Couleur_tableau_TextBox_Input, RoutingStrategies.Tunnel);
-        }
+        }*/
 
         private void Error(TextBox textBox, string message)
         {
@@ -138,10 +176,10 @@ namespace Jeux_de_la_vie.Avalonia.Windows
 
         private void Propriété_du_tableau_Window_Propriété_changé(object? sender, EventArgs e)
         {
-            Taille_lignes_TextBox.BorderBrush = null;
-            Taille_colonnes_TextBox.BorderBrush = null;
-            Couleur_cellule_TextBox.BorderBrush = null;
-            Couleur_tableau_TextBox.BorderBrush = null;
+            /*Taille_lignes_TextBox.BorderBrush = Brushes.Gray;
+            Taille_colonnes_TextBox.BorderBrush = Brushes.Gray;
+            Couleur_cellule_TextBox.BorderBrush = Brushes.Gray;
+            Couleur_tableau_TextBox.BorderBrush = Brushes.Gray;*/
         }
         #endregion
     }
