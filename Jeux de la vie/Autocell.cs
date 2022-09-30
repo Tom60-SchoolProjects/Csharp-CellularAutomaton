@@ -104,7 +104,7 @@ namespace Jeux_de_la_vie
         }
 
         /// <summary>
-        /// Randomly initialize the gameboard
+        /// Initialiser aléatoirement le plateau de jeu
         /// </summary>
         /// <param name="table"></param>
         /// <param name="table_size"></param>
